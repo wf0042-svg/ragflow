@@ -1,3 +1,9 @@
+import nltk
+try:
+    nltk.data.find('corpora/wordnet')
+except LookupError:
+    nltk.download('wordnet')
+
 #
 #  Copyright 2024 The InfiniFlow Authors. All Rights Reserved.
 #
