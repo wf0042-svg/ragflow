@@ -28,5 +28,20 @@ if ! docker ps | grep -q "docker-mysql-1"; then
 fi
 
 # 启动后端服务（包括 ragflow_server 和 task_executor）
-echo "🎬 启动后端服务..."
-bash docker/launch_backend_service.sh
+echo "🎬 启动后端服务（后台运行）..."
+bash docker/launch_backend_service.sh &
+
+# 等待后端启动并监听端口
+echo "⏳ 等待后端服务启动..."
+for i in {1..30}; do
+    if lsof -i :9380 >/dev/null 2>&1; then
+        echo "✅ 后端服务已就绪（端口 9380）"
+        break
+    fi
+    if [ $i -eq 30 ]; then
+        echo "❌ 后端服务启动超时"
+        exit 1
+    fi
+    sleep 1
+    echo "   等待中... ($i/30)"
+done
